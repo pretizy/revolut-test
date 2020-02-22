@@ -37,7 +37,6 @@ public class TransferPostHandler implements HttpHandler {
                 InputStream inputStream = exchange.getRequestBody();
                 OutputStream outputStream = exchange.getResponseBody();
                 String length = exchange.getRequestHeaders().getFirst("Content-length");
-                InputStream in = exchange.getRequestBody();
                 String json = retrieveHttpBody(Integer.parseInt(length), inputStream);
                 TransferRequest transferRequest = objectMapper.readValue(json, TransferRequest.class);
                 if (isValidRequest(transferRequest)) {
@@ -72,7 +71,8 @@ public class TransferPostHandler implements HttpHandler {
 
     private boolean isValidRequest(TransferRequest transferRequest) {
         return transferRequest.getAmount().compareTo(BigDecimal.ZERO) > 0
-                && !transferRequest.getSenderIban().isBlank() && !transferRequest.getReceiverIban().isBlank();
+                && !transferRequest.getSenderIban().isBlank() && !transferRequest.getReceiverIban().isBlank()
+                && !transferRequest.getSenderIban().equalsIgnoreCase(transferRequest.getReceiverIban());
     }
 
 }
